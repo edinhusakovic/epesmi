@@ -238,20 +238,49 @@ function ePostaObstaja(email, callback) {
 
 // Registracija novega uporabnika
 streznik.post('/prijava', function(zahteva, odgovor) {
+ 
   var form = new formidable.IncomingForm();
   
   form.parse(zahteva, function (napaka, polja, datoteke) {
-      pb.run("INSERT INTO Customer (FirstName, LastName, Company, Address, City, State, Country, PostalCode, \
-	            Phone, Fax, Email, SupportRepId) VALUES ($fn,$ln,$com,$addr,$city,$state,$country,$pc,$phone,$fax,$email,$sri)", 
-	            {}, function(napaka) {
-	              vrniStranke(function(napaka1, stranke) {
-                  vrniRacune(function(napaka2, racuni) {
-                    odgovor.render('prijava', {sporocilo: "", seznamStrank: stranke, seznamRacunov: racuni});  
-                  });
-                });
-      });
-  });
+  if (polja.FirstName.length == 0 || polja.LastName.length == 0 || polja.Company.length == 0 || polja.Address.length == 0 || polja.City.length == 0 || polja.State.length == 0 || polja.Country.length == 0 || polja.PostalCode.length == 0 || polja.Phone.length == 0 || polja.Fax.length == 0 || polja.Email.length == 0) {
+    vrniStranke(function(napakal, stranke) {
+      vrniRacune(function(napaka2, racuni) {
+        odgovor.render('prijava', {sporocilo: "Prišlo je do napake pri dodajanju nove stranke. Prosim preverite vnesene podatke in poskusite znova." ,seznamStrank: stranke, seznamRacunov: racuni}); 
+}) 
 });
+} 
+else {
+
+   ePostaObstaja(polja.Email,function(obstaja){
+    if( obstaja === 1){
+      vrniStranke(function(napakal, stranke) {
+      vrniRacune(function(napaka2, racuni) {
+        odgovor.render('prijava', {sporocilo: "Izbrana e-pošta je že uporabljena pri obstoječi stranki." ,seznamStrank: stranke, seznamRacunov: racuni}); 
+}) 
+});
+    
+    }
+    
+    else{
+    pb.run("INSERT INTO Customer (FirstName, LastName, Company, Address, City, State, Country, PostalCode, \
+  	            Phone, Fax, Email, SupportRepId) VALUES ($fn,$ln,$com,$addr,$city,$state,$country,$pc,$phone,$fax,$email,$sri)", 
+  	            
+  {$fn: polja.FirstName, $ln: polja.LastName, $com: polja.Company, $addr: polja.Address, $city: polja.City, $state: polja.State, $country: polja.country, $pc: polja.PostalCode, $phone: polja.Phone, $fax: polja.fax, $email: polja.Email, $sri:7 },
+  function (napaka) {
+    vrniStranke(function(napaka1, stranke) {
+      vrniRacune(function(napaka2, racuni) {
+        odgovor.render('prijava', {sporocilo: "Stranka " +polja.FirstName +" " + polja.LastName + " je bila uspešno registrirana.", seznamStrank: stranke, seznamRacunov: racuni});
+        }) 
+    }); 
+  });
+  
+}
+});
+}
+})
+})
+
+
 
 // Prikaz strani za prijavo
 streznik.get('/prijava', function(zahteva, odgovor) {
