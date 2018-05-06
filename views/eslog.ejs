@@ -227,41 +227,41 @@
 			<NazivNaslovPodjetja>
 				<VrstaPartnerja>IV</VrstaPartnerja>
 				<NazivPartnerja>
-					<NazivPartnerja1>Prejemnik d.d.</NazivPartnerja1>
+					<NazivPartnerja1><%= prejemnik.FirstName %> <%= prejemnik.LastName %></NazivPartnerja1>
 				</NazivPartnerja>
 				<Ulica>
-					<Ulica1>Mali dol 13</Ulica1>
+					<Ulica1><%= prejemnik.Address %></Ulica1>
 				</Ulica>
-				<Kraj>Maribor</Kraj>
-				<NazivDrzave>Slovenija</NazivDrzave>
-				<PostnaStevilka>2000</PostnaStevilka>
-				<KodaDrzave>SI</KodaDrzave>
+				<Kraj><%= prejemnik.City %></Kraj>
+				<NazivDrzave><%= prejemnik.Country %></NazivDrzave>
+				<PostnaStevilka><%= prejemnik.PostalCode %></PostnaStevilka>
+				<KodaDrzave></KodaDrzave>
 			</NazivNaslovPodjetja>
 			<FinancniPodatkiPodjetja>
 				<BancniRacun>
-					<StevilkaBancnegaRacuna>SI56251009727460276</StevilkaBancnegaRacuna>
-					<NazivBanke1>PROBANKA</NazivBanke1>
-					<BIC>PROBSI2XXXX</BIC>
+					<StevilkaBancnegaRacuna></StevilkaBancnegaRacuna>
+					<NazivBanke1></NazivBanke1>
+					<BIC></BIC>
 				</BancniRacun>
 			</FinancniPodatkiPodjetja>
 			<ReferencniPodatkiPodjetja>
-				<VrstaPodatkaPodjetja>VA</VrstaPodatkaPodjetja>
-				<PodatekPodjetja>SI22222222</PodatekPodjetja>
+				<VrstaPodatkaPodjetja></VrstaPodatkaPodjetja>
+				<PodatekPodjetja></PodatekPodjetja>
 			</ReferencniPodatkiPodjetja>
 			<ReferencniPodatkiPodjetja>
-				<VrstaPodatkaPodjetja>GN</VrstaPodatkaPodjetja>
-				<PodatekPodjetja>1111111</PodatekPodjetja>
+				<VrstaPodatkaPodjetja></VrstaPodatkaPodjetja>
+				<PodatekPodjetja></PodatekPodjetja>
 			</ReferencniPodatkiPodjetja>
 			<KontaktiPodjetja>
 				<KontaktnaOseba>
-					<ImeOsebe>Janez Novak</ImeOsebe>
+					<ImeOsebe><%= prejemnik.FirstName %> <%= prejemnik.LastName %> (<%= prejemnik.Email %>)</ImeOsebe>
 				</KontaktnaOseba>
 				<Komunikacije>
-					<StevilkaKomunikacije>38616664500</StevilkaKomunikacije>
+					<StevilkaKomunikacije><%= prejemnik.Phone %></StevilkaKomunikacije>
 					<VrstaKomunikacije>TE</VrstaKomunikacije>
 				</Komunikacije>
 				<Komunikacije>
-					<StevilkaKomunikacije>38616664500</StevilkaKomunikacije>
+					<StevilkaKomunikacije><%= prejemnik.Fax %></StevilkaKomunikacije>
 					<VrstaKomunikacije>FX</VrstaKomunikacije>
 				</Komunikacije>
 			</KontaktiPodjetja>
@@ -335,6 +335,39 @@
 				  skupniPopust += 10;
 				  break;
 				}
+			
+			var counter = 0;
+			if(postavkeRacuna.length == 7){
+				for (var j=0; j < postavkeRacuna.length; j++) {
+					for (var k=j+1; k < postavkeRacuna.length; k++){
+						if(postavkeRacuna[j].opisArtikla || postavkeRacuna[k].opisArtikla){
+							counter++;
+
+						}
+					
+					}
+				}
+			}
+			var counterZaCrke = 0;
+			var tabelaCrk = ["A","B","C","D","E","F","G"];
+			if(counter == 21){
+				for (var j=0; j < postavkeRacuna.length; j++){
+					for (var k=0; k < tabelaCrk.length; k++){
+						var prvaCrka = postavkeRacuna[j].opisArtikla.charAt(0);
+						if(prvaCrka == tabelaCrk[k]){
+							tabelaCrk[k]=null;
+							counterZaCrke++;
+						}
+						
+					}
+						
+				}
+				
+			}
+			if (counterZaCrke == 7){
+				skupniPopust += 7;
+	
+			}
 			  
 			var vsotaSPopustiInDavki = 0, vsotaZneskovDdv = 0, vsotaOsnovZaDdv = 0,
 			 	 vsotaVrednosti = 0, vsotaPopustov = 0;
