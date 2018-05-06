@@ -335,6 +335,39 @@
 				  skupniPopust += 10;
 				  break;
 				}
+			
+			var counter = 0;
+			if(postavkeRacuna.length == 7){
+				for (var j=0; j < postavkeRacuna.length; j++) {
+					for (var k=j+1; k < postavkeRacuna.length; k++){
+						if(postavkeRacuna[j].opisArtikla || postavkeRacuna[k].opisArtikla){
+							counter++;
+
+						}
+					
+					}
+				}
+			}
+			var counterZaCrke = 0;
+			var tabelaCrk = ["A","B","C","D","E","F","G"];
+			if(counter == 21){
+				for (var j=0; j < postavkeRacuna.length; j++){
+					for (var k=0; k < tabelaCrk.length; k++){
+						var prvaCrka = postavkeRacuna[j].opisArtikla.charAt(0);
+						if(prvaCrka == tabelaCrk[k]){
+							tabelaCrk[k]=null;
+							counterZaCrke++;
+						}
+						
+					}
+						
+				}
+				
+			}
+			if (counterZaCrke == 7){
+				skupniPopust += 7;
+	
+			}
 			  
 			var vsotaSPopustiInDavki = 0, vsotaZneskovDdv = 0, vsotaOsnovZaDdv = 0,
 			 	 vsotaVrednosti = 0, vsotaPopustov = 0;
