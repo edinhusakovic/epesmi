@@ -58,9 +58,16 @@ var vrniNazivStranke = function(strankaId, callback) {
       }
     });
 };
-
+var uporabIme= "";
 // Prikaz seznama pesmi na strani
 streznik.get('/', function(zahteva, odgovor) {
+  zahteva.session.uporabniskoIme = uporabIme;
+  
+  if (zahteva.session.stranka === undefined || zahteva.session.stranka === null){
+    odgovor.redirect('/prijava');
+   return;
+  }
+  
   pb.all("SELECT Track.TrackId AS id, Track.Name AS pesem, \
           Artist.Name AS izvajalec, Track.UnitPrice * " +
           razmerje_usd_eur + " AS cena, \
@@ -79,7 +86,7 @@ streznik.get('/', function(zahteva, odgovor) {
     else {
         for (var i=0; i<vrstice.length; i++)
           vrstice[i].stopnja = davcnaStopnja(vrstice[i].izvajalec, vrstice[i].zanr);
-        odgovor.render('seznam', {seznamPesmi: vrstice, nazivStranke: ""});
+        odgovor.render('seznam', {seznamPesmi: vrstice, nazivStranke: zahteva.session.uporabniskoIme});
       }
   });
 });
@@ -267,12 +274,19 @@ streznik.post('/stranka', function(zahteva, odgovor) {
   var form = new formidable.IncomingForm();
   
   form.parse(zahteva, function (napaka1, polja, datoteke) {
+    zahteva.session.stranka = polja.seznamStrank;
+    vrniNazivStranke(polja.seznamStrank, function(index){
+    uporabIme = index;
+    
+    console.log(index);
     odgovor.redirect('/');
+    })
   });
 });
-
 // Odjava stranke
 streznik.post('/odjava', function(zahteva, odgovor) {
+  zahteva.session.stranka = null;
+  zahteva.session.kosarica = null;
   odgovor.redirect('/prijava');
 });
 
